@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace App.Infras
 {
-    internal class AppContext : ApplicationContext
+    public class AppContext : ApplicationContext
     {
         public AppContext()
         {
