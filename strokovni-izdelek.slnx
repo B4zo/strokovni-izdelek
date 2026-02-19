@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="src/API/API.csproj" Id="a9c5b54a-0bde-4c63-bb7f-768142f5da6d" />
+  <Project Path="src/App/App.csproj" Id="be5bb619-6f80-4851-a5af-2e7a215ca754" />
+  <Project Path="src/docker/docker-compose.dcproj" Id="81dded9d-158b-e303-5f62-77a2896d2a5a">
+    <Build />
+  </Project>
+</Solution>
