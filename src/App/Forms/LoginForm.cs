@@ -209,11 +209,6 @@ namespace App.Forms
             HideMenuStrip();
         }
 
-        private void connectionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException(); // TO DO: add a settings menu, this opens the settings menu with the correct submenu opened
-        }
-
         private void connectionToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             connectionsToolStripMenuItem.DropDownItems.Clear();
