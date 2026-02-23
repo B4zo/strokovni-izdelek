@@ -1,5 +1,4 @@
-﻿using App.Auth;
-using App.Infras;
+﻿using App.Infras;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +14,6 @@ namespace App.Forms
     public partial class LoginForm : Form
     {
         private bool _altMode;
-        private ApiClient _api;
         public LoginForm()
         {
             InitializeComponent();
@@ -35,13 +33,12 @@ namespace App.Forms
         {
             var selected = Connection.GetSelected();
 
-            toolStripStatusLabelConnection.Text = selected is null ? "(ni izbrana)" : $"{selected.Name}";
+            toolStripStatusLabelConnection.Text =
+                selected is null ? "(ni izbrana)" : $"{selected.Name}";
 
             if (selected is not null)
             {
-                _api = new ApiClient(selected.BaseUrl);
-
-                Session.Clear();
+                Client.UseBaseUrl(selected.BaseUrl);
             }
         }
         private void HookClickToCloseMenu(Control root)
@@ -101,7 +98,7 @@ namespace App.Forms
         {
             buttonLogIn.Enabled = false;
 
-            if (_api is null)
+            if (Connection.GetSelected() is null)
             {
                 MessageBox.Show("Najprej izberi ali dodaj povezavo.", "Povezava", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 buttonLogIn.Enabled = true;
@@ -129,7 +126,7 @@ namespace App.Forms
                 var username = textBoxUsername.Text.Trim();
                 var password = textBoxPassword.Text;
 
-                await _api.Login(username, password);
+                await Client.LoginAsync(username, password);
 
                 DialogResult = DialogResult.OK;
                 Close();
