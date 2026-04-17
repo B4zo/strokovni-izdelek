@@ -14,7 +14,7 @@ namespace API.Models
         public People? Person { get; set; }
         public Companies? Company { get; set; }
 
-        public ICollection<VehicleOwners> VehicleOwners { get; set; } = new List<VehicleOwners>();
-        public ICollection<Services> Services { get; set; } = new List<Services>();
+        public ICollection<VehicleOwnership> VehicleOwnerships { get; set; } = new List<VehicleOwnership>();
+        public ICollection<Visit> Visits { get; set; } = new List<Visit>();
     }
 }

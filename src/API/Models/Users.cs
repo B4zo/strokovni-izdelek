@@ -14,12 +14,9 @@ namespace API.Models
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? LastLoginAt { get; set; }
 
-        public ICollection<Services> CreatedServices { get; set; } = new List<Services>();
-        public ICollection<Services> AssignedServices { get; set; } = new List<Services>();
-
-        public ICollection<ServiceTasks> PerformedServiceTasks { get; set; } = new List<ServiceTasks>();
-
-        public ICollection<VehicleInspections> PerformedInspections { get; set; } = new List<VehicleInspections>();
-        public ICollection<VehicleHomologations> HandledHomologations { get; set; } = new List<VehicleHomologations>();
+        public ICollection<UserSession> Sessions { get; set; } = new List<UserSession>();
+        public ICollection<Visit> VisitsHandled { get; set; } = new List<Visit>();
+        public ICollection<Inspection> PerformedInspections { get; set; } = new List<Inspection>();
+        public ICollection<Homologation> HandledHomologations { get; set; } = new List<Homologation>();
     }
 }

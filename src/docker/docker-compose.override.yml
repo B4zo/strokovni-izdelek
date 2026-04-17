@@ -3,5 +3,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__App=Host=db;Port=5432;Database=tehnicni_pregledi;Username=app;Password=PASSWORD
+      - ConnectionStrings__Migrations=Host=db;Port=5432;Database=tehnicni_pregledi;Username=db_admin;Password=PASSWORD
     ports:
       - "8080"

@@ -24,6 +24,55 @@ namespace API.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pgcrypto");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("API.Models.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("action");
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("ChangedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("changed_by_user_id");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("details");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("entity_id");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("entity_name");
+
+                    b.Property<Guid?>("VisitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangedByUserId");
+
+                    b.HasIndex("VisitId");
+
+                    b.ToTable("audit_log", "tehnicni");
+                });
+
             modelBuilder.Entity("API.Models.Companies", b =>
                 {
                     b.Property<Guid>("CustomerId")
@@ -87,6 +136,269 @@ namespace API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("API.Models.Homologation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("DocumentNo")
+                        .HasColumnType("text")
+                        .HasColumnName("document_no");
+
+                    b.Property<Guid?>("HandledByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("handled_by_user_id");
+
+                    b.Property<DateOnly?>("IssuedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("issued_at");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<DateOnly?>("ValidUntil")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_until");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.Property<Guid>("VisitOperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_operation_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HandledByUserId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VisitOperationId");
+
+                    b.ToTable("homologations", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("homologations_kind_check", "\"kind\" IN ('coc','import','modification','individual_approval','data_correction')");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.Inspection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool>("Finished")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("finished");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<int?>("OdometerKm")
+                        .HasColumnType("integer")
+                        .HasColumnName("odometer_km");
+
+                    b.Property<DateTimeOffset>("PerformedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("performed_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("PerformedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("performed_by_user_id");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("result");
+
+                    b.Property<DateOnly?>("ValidUntil")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_until");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.Property<Guid>("VisitOperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_operation_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PerformedByUserId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VisitOperationId");
+
+                    b.ToTable("inspections", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("inspections_result_check", "\"result\" IN ('pending','passed','failed','conditional')");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.InsurancePolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("EUR")
+                        .HasColumnName("currency");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<Guid>("InsurerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("insurer_id");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("PolicyNo")
+                        .HasColumnType("text")
+                        .HasColumnName("policy_no");
+
+                    b.Property<decimal?>("PremiumAmount")
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("premium_amount");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("template_id");
+
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_from");
+
+                    b.Property<DateOnly?>("ValidTo")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_to");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.Property<Guid>("VisitOperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_operation_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("InsurerId");
+
+                    b.HasIndex("TemplateId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VisitOperationId");
+
+                    b.ToTable("insurance_policies", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("insurance_policies_valid_range_check", "\"valid_to\" IS NULL OR \"valid_to\" >= \"valid_from\"");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.InsurancePolicyTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.Property<Guid>("InsurerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("insurer_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Scope")
+                        .HasColumnType("text")
+                        .HasColumnName("scope");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InsurerId", "Code")
+                        .IsUnique();
+
+                    b.ToTable("insurance_policy_templates", "tehnicni");
+                });
+
+            modelBuilder.Entity("API.Models.Insurer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("insurers", "tehnicni");
+                });
+
             modelBuilder.Entity("API.Models.People", b =>
                 {
                     b.Property<Guid>("CustomerId")
@@ -115,48 +427,7 @@ namespace API.Migrations
                     b.ToTable("people", "tehnicni");
                 });
 
-            modelBuilder.Entity("API.Models.ServiceTasks", b =>
-                {
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("service_id");
-
-                    b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("task_id");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<DateTimeOffset?>("PerformedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("performed_at");
-
-                    b.Property<Guid?>("PerformedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("performed_by");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("pending")
-                        .HasColumnName("status");
-
-                    b.HasKey("ServiceId", "TaskId");
-
-                    b.HasIndex("PerformedBy");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("service_tasks", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("service_tasks_status_check", "\"status\" IN ('pending','done','failed')");
-                        });
-                });
-
-            modelBuilder.Entity("API.Models.Services", b =>
+            modelBuilder.Entity("API.Models.Plate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,9 +435,83 @@ namespace API.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<Guid?>("AssignedTo")
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("PlateNumber")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("plate_number");
+
+                    b.Property<string>("RegionCode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("region_code");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlateNumber")
+                        .IsUnique();
+
+                    b.ToTable("plates", "tehnicni");
+                });
+
+            modelBuilder.Entity("API.Models.PlateAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("assigned_to");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("PlateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("plate_id");
+
+                    b.Property<Guid>("RegistrationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("registration_id");
+
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_from");
+
+                    b.Property<DateOnly?>("ValidTo")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_to");
+
+                    b.Property<Guid>("VisitOperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_operation_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlateId");
+
+                    b.HasIndex("RegistrationId");
+
+                    b.HasIndex("VisitOperationId");
+
+                    b.ToTable("plate_assignments", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("plate_assignments_valid_range_check", "\"valid_to\" IS NULL OR \"valid_to\" >= \"valid_from\"");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -174,46 +519,34 @@ namespace API.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Guid?>("CreatedBy")
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<Guid>("SessionId")
                         .HasColumnType("uuid")
-                        .HasColumnName("created_by");
+                        .HasColumnName("session_id");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("customer_id");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<string>("Status")
+                    b.Property<string>("TokenHash")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("text")
-                        .HasDefaultValue("open")
-                        .HasColumnName("status");
-
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("vehicle_id");
+                        .HasColumnName("token_hash");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedTo");
+                    b.HasIndex("SessionId");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("services", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("services_status_check", "\"status\" IN ('open','waiting_docs','in_progress','completed','cancelled')");
-                        });
+                    b.ToTable("refresh_tokens", "tehnicni");
                 });
 
-            modelBuilder.Entity("API.Models.Tasks", b =>
+            modelBuilder.Entity("API.Models.UserSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -221,22 +554,84 @@ namespace API.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("code");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("DeviceName")
+                        .HasColumnType("text")
+                        .HasColumnName("device_name");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("text")
+                        .HasColumnName("ip_address");
+
+                    b.Property<string>("SessionKey")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnName("session_key");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
+                    b.HasIndex("SessionKey")
                         .IsUnique();
 
-                    b.ToTable("tasks", "tehnicni");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("user_sessions", "tehnicni");
+                });
+
+            modelBuilder.Entity("API.Models.UserSessionEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("ActorUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_user_id");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("details");
+
+                    b.Property<DateTimeOffset>("EventAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("event_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("event_type");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("session_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActorUserId");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("user_session_events", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("user_session_events_type_check", "\"event_type\" IN ('login','refresh','logout','logout_expired','login_rejected','token_issued','token_refreshed')");
+                        });
                 });
 
             modelBuilder.Entity("API.Models.Users", b =>
@@ -296,7 +691,7 @@ namespace API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("API.Models.VehicleHomologations", b =>
+            modelBuilder.Entity("API.Models.Vehicle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,246 +699,9 @@ namespace API.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("DocumentNo")
-                        .HasColumnType("text")
-                        .HasColumnName("document_no");
-
-                    b.Property<Guid?>("HandledBy")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid")
-                        .HasColumnName("handled_by");
-
-                    b.Property<DateOnly?>("IssuedAt")
-                        .HasColumnType("date")
-                        .HasColumnName("issued_at");
-
-                    b.Property<string>("Kind")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("kind");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<Guid?>("ServiceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("service_id");
-
-                    b.Property<DateOnly?>("ValidUntil")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_until");
-
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("vehicle_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HandledBy");
-
-                    b.HasIndex("ServiceId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("vehicle_homologations", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("vehicle_homologations_kind_check", "\"kind\" IN ('coc','import','modification','individual_approval','data_correction')");
-                        });
-                });
-
-            modelBuilder.Entity("API.Models.VehicleInspections", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<int?>("OdometerKm")
-                        .HasColumnType("integer")
-                        .HasColumnName("odometer_km");
-
-                    b.Property<DateTimeOffset>("PerformedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("performed_at");
-
-                    b.Property<Guid?>("PerformedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("performed_by");
-
-                    b.Property<string>("Result")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("result");
-
-                    b.Property<Guid?>("ServiceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("service_id");
-
-                    b.Property<DateOnly?>("ValidUntil")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_until");
-
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("vehicle_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PerformedBy");
-
-                    b.HasIndex("ServiceId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("vehicle_inspections", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("vehicle_inspections_result_check", "\"result\" IN ('pass','fail','conditional')");
-                        });
-                });
-
-            modelBuilder.Entity("API.Models.VehicleInsurances", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("CoverageType")
-                        .HasColumnType("text")
-                        .HasColumnName("coverage_type");
-
-                    b.Property<string>("InsurerName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("insurer_name");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<string>("PolicyNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("policy_number");
-
-                    b.Property<Guid?>("ServiceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("service_id");
-
-                    b.Property<DateOnly>("ValidFrom")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_from");
-
-                    b.Property<DateOnly>("ValidTo")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_to");
-
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("vehicle_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("vehicle_insurances", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("vehicle_insurances_valid_range_check", "\"valid_to\" >= \"valid_from\"");
-                        });
-                });
-
-            modelBuilder.Entity("API.Models.VehicleOwners", b =>
-                {
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("vehicle_id");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("customer_id");
-
-                    b.Property<DateOnly>("ValidFrom")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasColumnName("valid_from")
-                        .HasDefaultValueSql("CURRENT_DATE");
-
-                    b.Property<DateOnly?>("ValidTo")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_to");
-
-                    b.HasKey("VehicleId", "CustomerId", "ValidFrom");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("vehicle_owners", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("vehicle_owners_valid_range_check", "\"valid_to\" IS NULL OR \"valid_to\" >= \"valid_from\"");
-                        });
-                });
-
-            modelBuilder.Entity("API.Models.VehicleRegistrations", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<string>("PlateNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("plate_number");
-
-                    b.Property<Guid?>("ServiceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("service_id");
-
-                    b.Property<DateOnly>("ValidFrom")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_from");
-
-                    b.Property<DateOnly>("ValidTo")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_to");
-
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("vehicle_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("vehicle_registrations", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("vehicle_registrations_valid_range_check", "\"valid_to\" >= \"valid_from\"");
-                        });
-                });
-
-            modelBuilder.Entity("API.Models.Vehicles", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Category")
-                        .HasColumnType("text")
-                        .HasColumnName("category");
+                        .HasColumnName("category_id");
 
                     b.Property<string>("Make")
                         .HasColumnType("text")
@@ -557,11 +715,8 @@ namespace API.Migrations
                         .HasColumnType("text")
                         .HasColumnName("notes");
 
-                    b.Property<string>("PlateNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("plate_number");
-
                     b.Property<string>("Vin")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("vin");
 
@@ -571,13 +726,236 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlateNumber")
-                        .IsUnique();
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("Vin")
                         .IsUnique();
 
                     b.ToTable("vehicles", "tehnicni");
+                });
+
+            modelBuilder.Entity("API.Models.VehicleCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("CategoryGroup")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("category_group");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("label");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("vehicle_categories", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("vehicle_categories_code_check", "\"code\" IN ('L1e','L2e','L3e','L4e','L5e','L6e','L7e','M1','M2','M3','N1','N2','N3','O1','O2','O3','O4','T1','T2','T3','T4','T5','C1','C2','C3','C4')");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.VehicleOwnership", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_from");
+
+                    b.Property<DateOnly?>("ValidTo")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_to");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.Property<Guid>("VisitOperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_operation_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VisitOperationId");
+
+                    b.ToTable("vehicle_ownerships", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("vehicle_ownerships_valid_range_check", "\"valid_to\" IS NULL OR \"valid_to\" >= \"valid_from\"");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.VehicleRegistration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("RegistrationNo")
+                        .HasColumnType("text")
+                        .HasColumnName("registration_no");
+
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_from");
+
+                    b.Property<DateOnly?>("ValidTo")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_to");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.Property<Guid>("VisitOperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_operation_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VisitOperationId");
+
+                    b.ToTable("vehicle_registrations", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("vehicle_registrations_valid_range_check", "\"valid_to\" IS NULL OR \"valid_to\" >= \"valid_from\"");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.Visit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<Guid?>("HandledByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("handled_by_user_id");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<Guid?>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.Property<DateTimeOffset>("VisitedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("visited_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("HandledByUserId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("visits", "tehnicni");
+                });
+
+            modelBuilder.Entity("API.Models.VisitOperation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("OpType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("op_type");
+
+                    b.Property<Guid>("VisitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VisitId");
+
+                    b.ToTable("visit_operations", "tehnicni", t =>
+                        {
+                            t.HasCheckConstraint("visit_operations_type_check", "\"op_type\" IN ('ownership_change','registration_issue','registration_extension','plate_assignment','insurance_issue','inspection_finish','homologation','other')");
+                        });
+                });
+
+            modelBuilder.Entity("API.Models.AuditLog", b =>
+                {
+                    b.HasOne("API.Models.Users", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId");
+
+                    b.HasOne("API.Models.Visit", "Visit")
+                        .WithMany("AuditEntries")
+                        .HasForeignKey("VisitId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ChangedByUser");
+
+                    b.Navigation("Visit");
                 });
 
             modelBuilder.Entity("API.Models.Companies", b =>
@@ -591,6 +969,110 @@ namespace API.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("API.Models.Homologation", b =>
+                {
+                    b.HasOne("API.Models.Users", "HandledByUser")
+                        .WithMany("HandledHomologations")
+                        .HasForeignKey("HandledByUserId");
+
+                    b.HasOne("API.Models.Vehicle", "Vehicle")
+                        .WithMany("Homologations")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.VisitOperation", "VisitOperation")
+                        .WithMany("Homologations")
+                        .HasForeignKey("VisitOperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HandledByUser");
+
+                    b.Navigation("Vehicle");
+
+                    b.Navigation("VisitOperation");
+                });
+
+            modelBuilder.Entity("API.Models.Inspection", b =>
+                {
+                    b.HasOne("API.Models.Users", "PerformedByUser")
+                        .WithMany("PerformedInspections")
+                        .HasForeignKey("PerformedByUserId");
+
+                    b.HasOne("API.Models.Vehicle", "Vehicle")
+                        .WithMany("Inspections")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.VisitOperation", "VisitOperation")
+                        .WithMany("Inspections")
+                        .HasForeignKey("VisitOperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PerformedByUser");
+
+                    b.Navigation("Vehicle");
+
+                    b.Navigation("VisitOperation");
+                });
+
+            modelBuilder.Entity("API.Models.InsurancePolicy", b =>
+                {
+                    b.HasOne("API.Models.Customers", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Insurer", "Insurer")
+                        .WithMany("InsurancePolicies")
+                        .HasForeignKey("InsurerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.InsurancePolicyTemplate", "Template")
+                        .WithMany("InsurancePolicies")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Vehicle", "Vehicle")
+                        .WithMany("InsurancePolicies")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.VisitOperation", "VisitOperation")
+                        .WithMany("InsurancePolicies")
+                        .HasForeignKey("VisitOperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Insurer");
+
+                    b.Navigation("Template");
+
+                    b.Navigation("Vehicle");
+
+                    b.Navigation("VisitOperation");
+                });
+
+            modelBuilder.Entity("API.Models.InsurancePolicyTemplate", b =>
+                {
+                    b.HasOne("API.Models.Insurer", "Insurer")
+                        .WithMany("PolicyTemplates")
+                        .HasForeignKey("InsurerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Insurer");
+                });
+
             modelBuilder.Entity("API.Models.People", b =>
                 {
                     b.HasOne("API.Models.Customers", "Customer")
@@ -602,164 +1084,172 @@ namespace API.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("API.Models.ServiceTasks", b =>
+            modelBuilder.Entity("API.Models.PlateAssignment", b =>
                 {
-                    b.HasOne("API.Models.Users", "PerformedByUser")
-                        .WithMany("PerformedServiceTasks")
-                        .HasForeignKey("PerformedBy")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("API.Models.Plate", "Plate")
+                        .WithMany("Assignments")
+                        .HasForeignKey("PlateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("API.Models.Services", "Service")
-                        .WithMany("ServiceTasks")
-                        .HasForeignKey("ServiceId")
+                    b.HasOne("API.Models.VehicleRegistration", "Registration")
+                        .WithMany("PlateAssignments")
+                        .HasForeignKey("RegistrationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Models.Tasks", "Task")
-                        .WithMany("ServiceTasks")
-                        .HasForeignKey("TaskId")
+                    b.HasOne("API.Models.VisitOperation", "VisitOperation")
+                        .WithMany("PlateAssignments")
+                        .HasForeignKey("VisitOperationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PerformedByUser");
+                    b.Navigation("Plate");
 
-                    b.Navigation("Service");
+                    b.Navigation("Registration");
 
-                    b.Navigation("Task");
+                    b.Navigation("VisitOperation");
                 });
 
-            modelBuilder.Entity("API.Models.Services", b =>
+            modelBuilder.Entity("API.Models.RefreshToken", b =>
                 {
-                    b.HasOne("API.Models.Users", "AssignedToUser")
-                        .WithMany("AssignedServices")
-                        .HasForeignKey("AssignedTo")
+                    b.HasOne("API.Models.UserSession", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("API.Models.UserSession", b =>
+                {
+                    b.HasOne("API.Models.Users", "User")
+                        .WithMany("Sessions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("API.Models.UserSessionEvent", b =>
+                {
+                    b.HasOne("API.Models.Users", "ActorUser")
+                        .WithMany()
+                        .HasForeignKey("ActorUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("API.Models.Users", "CreatedByUser")
-                        .WithMany("CreatedServices")
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("API.Models.UserSession", "Session")
+                        .WithMany("Events")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
+                    b.Navigation("ActorUser");
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("API.Models.Vehicle", b =>
+                {
+                    b.HasOne("API.Models.VehicleCategory", "Category")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("API.Models.VehicleOwnership", b =>
+                {
                     b.HasOne("API.Models.Customers", "Customer")
-                        .WithMany("Services")
+                        .WithMany("VehicleOwnerships")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("API.Models.Vehicles", "Vehicle")
-                        .WithMany("Services")
+                    b.HasOne("API.Models.Vehicle", "Vehicle")
+                        .WithMany("OwnershipHistory")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AssignedToUser");
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("API.Models.VehicleHomologations", b =>
-                {
-                    b.HasOne("API.Models.Users", "HandledByUser")
-                        .WithMany("HandledHomologations")
-                        .HasForeignKey("HandledBy")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("API.Models.Services", "Service")
-                        .WithMany("VehicleHomologations")
-                        .HasForeignKey("ServiceId");
-
-                    b.HasOne("API.Models.Vehicles", "Vehicle")
-                        .WithMany("Homologations")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HandledByUser");
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("API.Models.VehicleInspections", b =>
-                {
-                    b.HasOne("API.Models.Users", "PerformedByUser")
-                        .WithMany("PerformedInspections")
-                        .HasForeignKey("PerformedBy")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("API.Models.Services", "Service")
-                        .WithMany("VehicleInspections")
-                        .HasForeignKey("ServiceId");
-
-                    b.HasOne("API.Models.Vehicles", "Vehicle")
-                        .WithMany("Inspections")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PerformedByUser");
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("API.Models.VehicleInsurances", b =>
-                {
-                    b.HasOne("API.Models.Services", "Service")
-                        .WithMany("VehicleInsurances")
-                        .HasForeignKey("ServiceId");
-
-                    b.HasOne("API.Models.Vehicles", "Vehicle")
-                        .WithMany("Insurances")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("API.Models.VehicleOwners", b =>
-                {
-                    b.HasOne("API.Models.Customers", "Customer")
-                        .WithMany("VehicleOwners")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("API.Models.Vehicles", "Vehicle")
-                        .WithMany("Owners")
-                        .HasForeignKey("VehicleId")
+                    b.HasOne("API.Models.VisitOperation", "VisitOperation")
+                        .WithMany("OwnershipChanges")
+                        .HasForeignKey("VisitOperationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
                     b.Navigation("Vehicle");
+
+                    b.Navigation("VisitOperation");
                 });
 
-            modelBuilder.Entity("API.Models.VehicleRegistrations", b =>
+            modelBuilder.Entity("API.Models.VehicleRegistration", b =>
                 {
-                    b.HasOne("API.Models.Services", "Service")
-                        .WithMany("VehicleRegistrations")
-                        .HasForeignKey("ServiceId");
+                    b.HasOne("API.Models.Customers", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("API.Models.Vehicles", "Vehicle")
+                    b.HasOne("API.Models.Vehicle", "Vehicle")
                         .WithMany("Registrations")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Service");
+                    b.HasOne("API.Models.VisitOperation", "VisitOperation")
+                        .WithMany("Registrations")
+                        .HasForeignKey("VisitOperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Vehicle");
+
+                    b.Navigation("VisitOperation");
+                });
+
+            modelBuilder.Entity("API.Models.Visit", b =>
+                {
+                    b.HasOne("API.Models.Customers", "Customer")
+                        .WithMany("Visits")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Users", "HandledByUser")
+                        .WithMany("VisitsHandled")
+                        .HasForeignKey("HandledByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("API.Models.Vehicle", "Vehicle")
+                        .WithMany("Visits")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("HandledByUser");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("API.Models.VisitOperation", b =>
+                {
+                    b.HasOne("API.Models.Visit", "Visit")
+                        .WithMany("Operations")
+                        .HasForeignKey("VisitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Visit");
                 });
 
             modelBuilder.Entity("API.Models.Customers", b =>
@@ -768,55 +1258,89 @@ namespace API.Migrations
 
                     b.Navigation("Person");
 
-                    b.Navigation("Services");
+                    b.Navigation("VehicleOwnerships");
 
-                    b.Navigation("VehicleOwners");
+                    b.Navigation("Visits");
                 });
 
-            modelBuilder.Entity("API.Models.Services", b =>
+            modelBuilder.Entity("API.Models.InsurancePolicyTemplate", b =>
                 {
-                    b.Navigation("ServiceTasks");
-
-                    b.Navigation("VehicleHomologations");
-
-                    b.Navigation("VehicleInspections");
-
-                    b.Navigation("VehicleInsurances");
-
-                    b.Navigation("VehicleRegistrations");
+                    b.Navigation("InsurancePolicies");
                 });
 
-            modelBuilder.Entity("API.Models.Tasks", b =>
+            modelBuilder.Entity("API.Models.Insurer", b =>
                 {
-                    b.Navigation("ServiceTasks");
+                    b.Navigation("InsurancePolicies");
+
+                    b.Navigation("PolicyTemplates");
+                });
+
+            modelBuilder.Entity("API.Models.Plate", b =>
+                {
+                    b.Navigation("Assignments");
+                });
+
+            modelBuilder.Entity("API.Models.UserSession", b =>
+                {
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("API.Models.Users", b =>
                 {
-                    b.Navigation("AssignedServices");
-
-                    b.Navigation("CreatedServices");
-
                     b.Navigation("HandledHomologations");
 
                     b.Navigation("PerformedInspections");
 
-                    b.Navigation("PerformedServiceTasks");
+                    b.Navigation("Sessions");
+
+                    b.Navigation("VisitsHandled");
                 });
 
-            modelBuilder.Entity("API.Models.Vehicles", b =>
+            modelBuilder.Entity("API.Models.Vehicle", b =>
                 {
                     b.Navigation("Homologations");
 
                     b.Navigation("Inspections");
 
-                    b.Navigation("Insurances");
+                    b.Navigation("InsurancePolicies");
 
-                    b.Navigation("Owners");
+                    b.Navigation("OwnershipHistory");
 
                     b.Navigation("Registrations");
 
-                    b.Navigation("Services");
+                    b.Navigation("Visits");
+                });
+
+            modelBuilder.Entity("API.Models.VehicleCategory", b =>
+                {
+                    b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("API.Models.VehicleRegistration", b =>
+                {
+                    b.Navigation("PlateAssignments");
+                });
+
+            modelBuilder.Entity("API.Models.Visit", b =>
+                {
+                    b.Navigation("AuditEntries");
+
+                    b.Navigation("Operations");
+                });
+
+            modelBuilder.Entity("API.Models.VisitOperation", b =>
+                {
+                    b.Navigation("Homologations");
+
+                    b.Navigation("Inspections");
+
+                    b.Navigation("InsurancePolicies");
+
+                    b.Navigation("OwnershipChanges");
+
+                    b.Navigation("PlateAssignments");
+
+                    b.Navigation("Registrations");
                 });
 #pragma warning restore 612, 618
         }

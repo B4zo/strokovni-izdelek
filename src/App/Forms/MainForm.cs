@@ -1,21 +1,66 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using App.Infras;
+using App.Views;
 
+namespace App.Forms;
 
-namespace App.Forms
+public partial class MainForm : Form
 {
-    public partial class MainForm : Form
+    private readonly CustomersView _customersView = new();
+    private readonly AccountView _accountView = new();
+    private readonly VehicleRegistryView _vehicleRegistryView = new();
+    private readonly PoliciesView _policiesView = new();
+    private bool _isClosingAfterLogout;
+
+    public MainForm()
     {
-        public MainForm()
+        InitializeComponent();
+        FormClosing += MainForm_FormClosing;
+        ShowCustomers();
+    }
+
+    private void ShowView(Control view)
+    {
+        panelContent.Controls.Clear();
+        view.Dock = DockStyle.Fill;
+        panelContent.Controls.Add(view);
+    }
+
+    private void ShowCustomers() => ShowView(_customersView);
+
+    private void btnCustomers_Click(object sender, EventArgs e) => ShowCustomers();
+
+    private void btnVehicles_Click(object sender, EventArgs e) => ShowView(_vehicleRegistryView);
+
+    private void btnRegistrations_Click(object sender, EventArgs e) => ShowView(_vehicleRegistryView);
+
+    private void btnPolicies_Click(object sender, EventArgs e) => ShowView(_policiesView);
+
+    private async void btnLogout_Click(object sender, EventArgs e)
+        => await Client.LogoutAsync();
+
+    private void btnAccount_Click(object sender, EventArgs e)
+        => ShowView(_accountView);
+
+    private async void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
+    {
+        if (_isClosingAfterLogout || !Client.IsLoggedIn)
+            return;
+
+        e.Cancel = true;
+        Enabled = false;
+
+        try
         {
-            InitializeComponent();
+            var logoutTask = Client.LogoutAsync(suppressLoggedOutEvent: true);
+            var completed = await Task.WhenAny(logoutTask, Task.Delay(1500));
+
+            if (completed == logoutTask)
+                await logoutTask;
+        }
+        finally
+        {
+            _isClosingAfterLogout = true;
+            Close();
         }
     }
 }

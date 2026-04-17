@@ -4,6 +4,9 @@ namespace API.Helpers
 {
     public class TokenExpiry
     {
+        public static DateTimeOffset PlusMinutesUtc(int minutes)
+            => DateTimeOffset.UtcNow.AddMinutes(minutes);
+
         public static DateTimeOffset NextMidnightLjubljanaUtc()
         {
             var tz = TZConvert.GetTimeZoneInfo("Europe/Ljubljana");
