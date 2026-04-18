@@ -1,13 +1,13 @@
-using App.DTOs.Customers;
+using App.DTOs.Parties;
 using App.Infras;
 
 namespace App.Views;
 
-public partial class CustomersView : UserControl
+public partial class PartiesView : UserControl
 {
     private bool _suppressSelectionEvents;
 
-    public CustomersView()
+    public PartiesView()
     {
         InitializeComponent();
         radioPerson.Checked = true;
@@ -26,11 +26,11 @@ public partial class CustomersView : UserControl
     private async Task SearchAsync()
     {
         var query = BuildQuery();
-        var url = string.IsNullOrWhiteSpace(query) ? "api/customers" : $"api/customers?{query}";
-        var items = await Client.SendAsync<List<CustomerDto>>(HttpMethod.Get, url);
+        var url = string.IsNullOrWhiteSpace(query) ? "api/parties" : $"api/parties?{query}";
+        var items = await Client.SendAsync<List<PartyDto>>(HttpMethod.Get, url);
         _suppressSelectionEvents = true;
-        gridCustomers.DataSource = items;
-        gridCustomers.ClearSelection();
+        gridParty.DataSource = items;
+        gridParty.ClearSelection();
         _suppressSelectionEvents = false;
         ClearEditor();
         gridOwnedVehicles.DataSource = null;
@@ -54,7 +54,7 @@ public partial class CustomersView : UserControl
         txtPhoneFilter.Clear();
         txtEmailFilter.Clear();
         cboTypeFilter.SelectedIndex = 0;
-        gridCustomers.DataSource = null;
+        gridParty.DataSource = null;
         ClearEditor();
         gridOwnedVehicles.DataSource = null;
         gridRegisteredVehicles.DataSource = null;
@@ -62,118 +62,91 @@ public partial class CustomersView : UserControl
 
     private void radioPerson_CheckedChanged(object sender, EventArgs e) => ApplyTypeUi();
 
-    private async void btnSave_Click(object sender, EventArgs e)
-    {
-        var req = new CustomerUpsertRequest(
-            radioPerson.Checked ? "person" : "company",
-            txtAddress.Text.Trim(),
-            txtPhone.Text.Trim(),
-            txtEmail.Text.Trim(),
-            txtFullName.Text.Trim(),
-            dateBirth.Checked ? new DateOnly(dateBirth.Value.Year, dateBirth.Value.Month, dateBirth.Value.Day) : (DateOnly?)null,
-            txtTaxNumber.Text.Trim(),
-            txtNationalNo.Text.Trim(),
-            txtCompanyName.Text.Trim(),
-            txtRegistrationNo.Text.Trim());
-
-        await Client.SendAsync(HttpMethod.Post, "api/customers", req);
-        await ReloadAsync();
-    }
-
-    private async void btnDelete_Click(object sender, EventArgs e)
-    {
-        if (gridCustomers.CurrentRow?.DataBoundItem is not CustomerDto selected)
-            return;
-
-        await Client.SendAsync(HttpMethod.Delete, $"api/customers/{selected.Id}");
-        await ReloadAsync();
-    }
-
-    private async void gridCustomers_CellClick(object sender, DataGridViewCellEventArgs e)
+    private async void gridParty_CellClick(object sender, DataGridViewCellEventArgs e)
     {
         if (_suppressSelectionEvents || e.RowIndex < 0)
             return;
 
-        if (gridCustomers.Rows[e.RowIndex].DataBoundItem is not CustomerDto selected)
+        if (gridParty.Rows[e.RowIndex].DataBoundItem is not PartyDto selected)
             return;
 
-        LoadSelectedCustomerIntoEditor(selected);
-        await LoadCustomerRelationshipsAsync(selected.Id);
+        LoadSelectedPartyIntoEditor(selected);
+        await LoadPartyRelationshipsAsync(selected.Id);
     }
 
     private void ConfigureGrid()
     {
-        gridCustomers.AutoGenerateColumns = false;
-        gridCustomers.Columns.Clear();
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.AutoGenerateColumns = false;
+        gridParty.Columns.Clear();
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
             Name = "Type",
             HeaderText = "Tip",
-            DataPropertyName = nameof(CustomerDto.Type),
+            DataPropertyName = nameof(PartyDto.Type),
             Width = 80
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
             Name = "DisplayName",
             HeaderText = "Naziv",
-            DataPropertyName = nameof(CustomerDto.DisplayName),
+            DataPropertyName = nameof(PartyDto.DisplayName),
             Width = 220
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
             Name = "Address",
             HeaderText = "Naslov",
-            DataPropertyName = nameof(CustomerDto.Address),
+            DataPropertyName = nameof(PartyDto.Address),
             Width = 180
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
             Name = "Phone",
             HeaderText = "Telefon",
-            DataPropertyName = nameof(CustomerDto.Phone),
+            DataPropertyName = nameof(PartyDto.Phone),
             Width = 120
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
             Name = "Email",
             HeaderText = "Email",
-            DataPropertyName = nameof(CustomerDto.Email),
+            DataPropertyName = nameof(PartyDto.Email),
             Width = 180
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
-            Name = "TaxNumber",
+            Name = "TaxNo",
             HeaderText = "Davcna",
-            DataPropertyName = nameof(CustomerDto.TaxNumber),
+            DataPropertyName = nameof(PartyDto.TaxNo),
             Width = 110
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
-            Name = "NationalNo",
+            Name = "Emso",
             HeaderText = "EMSO",
-            DataPropertyName = nameof(CustomerDto.NationalNo),
+            DataPropertyName = nameof(PartyDto.Emso),
             Width = 130
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
-            Name = "RegistrationNo",
-            HeaderText = "Maticna",
-            DataPropertyName = nameof(CustomerDto.RegistrationNo),
-            Width = 110
+            Name = "CompanyRegNo",
+            HeaderText = "Maticna firme",
+            DataPropertyName = nameof(PartyDto.CompanyRegNo),
+            Width = 120
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
             Name = "DateOfBirth",
             HeaderText = "Rojen",
-            DataPropertyName = nameof(CustomerDto.DateOfBirth),
+            DataPropertyName = nameof(PartyDto.DateOfBirth),
             Width = 90,
             DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" }
         });
-        gridCustomers.Columns.Add(new DataGridViewTextBoxColumn
+        gridParty.Columns.Add(new DataGridViewTextBoxColumn
         {
             Name = "CreatedAt",
             HeaderText = "Ustvarjen",
-            DataPropertyName = nameof(CustomerDto.CreatedAt),
+            DataPropertyName = nameof(PartyDto.CreatedAt),
             Width = 130,
             DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy HH:mm" }
         });
@@ -184,11 +157,11 @@ public partial class CustomersView : UserControl
         txtAddress.Text = "";
         txtPhone.Text = "";
         txtEmail.Text = "";
-        txtTaxNumber.Text = "";
+        txtTaxNo.Text = "";
         txtFullName.Text = "";
-        txtNationalNo.Text = "";
+        txtEmso.Text = "";
         txtCompanyName.Text = "";
-        txtRegistrationNo.Text = "";
+        txtCompanyRegNo.Text = "";
         dateBirth.Checked = false;
         radioPerson.Checked = true;
         ApplyTypeUi();
@@ -212,30 +185,30 @@ public partial class CustomersView : UserControl
         gridRegisteredVehicles.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "VIN", DataPropertyName = "Vin", Width = 130 });
         gridRegisteredVehicles.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Vozilo", DataPropertyName = "VehicleDisplay", Width = 110 });
         gridRegisteredVehicles.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Reg.", DataPropertyName = "RegistrationNo", Width = 90 });
-        gridRegisteredVehicles.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Tablica", DataPropertyName = "PlateNumber", Width = 85 });
+        gridRegisteredVehicles.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Tablica", DataPropertyName = "PlateNo", Width = 85 });
         gridRegisteredVehicles.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Od", DataPropertyName = "ValidFrom", Width = 80, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" } });
         gridRegisteredVehicles.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Do", DataPropertyName = "ValidTo", Width = 80, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" } });
     }
 
-    private async Task LoadCustomerRelationshipsAsync(Guid customerId)
+    private async Task LoadPartyRelationshipsAsync(Guid partyId)
     {
-        var dto = await Client.SendAsync<CustomerDetailDto>(HttpMethod.Get, $"api/customers/{customerId}/details");
+        var dto = await Client.SendAsync<PartyDetailDto>(HttpMethod.Get, $"api/parties/{partyId}/details");
         gridOwnedVehicles.DataSource = dto.OwnedVehicles.ToList();
         gridRegisteredVehicles.DataSource = dto.RegisteredVehicles.ToList();
         gridOwnedVehicles.ClearSelection();
         gridRegisteredVehicles.ClearSelection();
     }
 
-    private void LoadSelectedCustomerIntoEditor(CustomerDto selected)
+    private void LoadSelectedPartyIntoEditor(PartyDto selected)
     {
         txtAddress.Text = selected.Address ?? "";
         txtPhone.Text = selected.Phone ?? "";
         txtEmail.Text = selected.Email ?? "";
-        txtTaxNumber.Text = "";
+        txtTaxNo.Text = "";
         txtFullName.Text = "";
-        txtNationalNo.Text = "";
+        txtEmso.Text = "";
         txtCompanyName.Text = "";
-        txtRegistrationNo.Text = "";
+        txtCompanyRegNo.Text = "";
         dateBirth.Checked = false;
 
         if (selected.Type == "person" && selected.Person is not null)
@@ -245,15 +218,15 @@ public partial class CustomersView : UserControl
             dateBirth.Checked = selected.Person.DateOfBirth is not null;
             if (selected.Person.DateOfBirth is not null)
                 dateBirth.Value = selected.Person.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue);
-            txtTaxNumber.Text = selected.Person.TaxNumber ?? "";
-            txtNationalNo.Text = selected.Person.NationalNo ?? "";
+            txtTaxNo.Text = selected.Person.TaxNo ?? "";
+            txtEmso.Text = selected.Person.Emso ?? "";
         }
         else if (selected.Type == "company" && selected.Company is not null)
         {
             radioCompany.Checked = true;
             txtCompanyName.Text = selected.Company.CompanyName;
-            txtTaxNumber.Text = selected.Company.TaxNumber ?? "";
-            txtRegistrationNo.Text = selected.Company.RegistrationNo ?? "";
+            txtTaxNo.Text = selected.Company.TaxNo ?? "";
+            txtCompanyRegNo.Text = selected.Company.CompanyRegNo ?? "";
         }
 
         ApplyTypeUi();
@@ -280,3 +253,5 @@ public partial class CustomersView : UserControl
         values.Add($"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value.Trim())}");
     }
 }
+
+

@@ -5,12 +5,13 @@ public sealed record RegistrationDto(
     Guid VehicleId,
     string VehicleVin,
     string VehicleDisplay,
-    Guid CustomerId,
-    string CustomerDisplay,
+    Guid PartyId,
+    string PartyDisplay,
     string? RegistrationNo,
-    string? PlateNumber,
+    string? PlateNo,
     DateOnly ValidFrom,
     DateOnly? ValidTo,
     bool IsCurrent,
     string? Notes
 );
+

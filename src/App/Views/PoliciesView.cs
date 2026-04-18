@@ -17,7 +17,7 @@ public partial class PoliciesView : UserControl
         gridPolicies.Columns.Clear();
         gridPolicies.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Polica", DataPropertyName = nameof(PolicyDto.PolicyNo), Width = 120 });
         gridPolicies.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "VIN", DataPropertyName = nameof(PolicyDto.VehicleVin), Width = 150 });
-        gridPolicies.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Stranka", DataPropertyName = nameof(PolicyDto.CustomerDisplay), Width = 170 });
+        gridPolicies.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Stranka", DataPropertyName = nameof(PolicyDto.PartyDisplay), Width = 170 });
         gridPolicies.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Zavarovalnica", DataPropertyName = nameof(PolicyDto.InsurerName), Width = 140 });
         gridPolicies.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Tip police", DataPropertyName = nameof(PolicyDto.TemplateName), Width = 150 });
         gridPolicies.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Od", DataPropertyName = nameof(PolicyDto.ValidFrom), Width = 90, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" } });
@@ -42,7 +42,7 @@ public partial class PoliciesView : UserControl
     {
         txtSearch.Clear();
         txtVin.Clear();
-        txtCustomerOrInsurer.Clear();
+        txtPartyOrInsurer.Clear();
         gridPolicies.DataSource = null;
         ClearEditor();
     }
@@ -57,7 +57,7 @@ public partial class PoliciesView : UserControl
 
         txtPolicyNo.Text = selected.PolicyNo ?? "";
         txtVehicle.Text = $"{selected.VehicleVin} {selected.VehicleDisplay}".Trim();
-        txtCustomer.Text = selected.CustomerDisplay;
+        txtParty.Text = selected.PartyDisplay;
         txtInsurer.Text = $"{selected.InsurerName} / {selected.TemplateName}";
     }
 
@@ -65,13 +65,13 @@ public partial class PoliciesView : UserControl
     {
         txtPolicyNo.Clear();
         txtVehicle.Clear();
-        txtCustomer.Clear();
+        txtParty.Clear();
         txtInsurer.Clear();
     }
 
     private string BuildUrl()
     {
-        var third = txtCustomerOrInsurer.Text.Trim();
+        var third = txtPartyOrInsurer.Text.Trim();
         var parts = new List<string>();
         Add(parts, "q", txtSearch.Text);
         Add(parts, "vin", txtVin.Text);
@@ -88,3 +88,4 @@ public partial class PoliciesView : UserControl
         values.Add($"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value.Trim())}");
     }
 }
+

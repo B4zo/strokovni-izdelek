@@ -7,9 +7,9 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<Customers> Customers => Set<Customers>();
-    public DbSet<People> People => Set<People>();
-    public DbSet<Companies> Companies => Set<Companies>();
+    public DbSet<Party> Parties => Set<Party>();
+    public DbSet<Person> People => Set<Person>();
+    public DbSet<Company> Companies => Set<Company>();
     public DbSet<Users> Users => Set<Users>();
     public DbSet<UserSession> UserSessions => Set<UserSession>();
     public DbSet<UserSessionEvent> UserSessionEvents => Set<UserSessionEvent>();
@@ -35,9 +35,9 @@ public class AppDbContext : DbContext
         modelBuilder.HasDefaultSchema("tehnicni");
         modelBuilder.HasPostgresExtension("pgcrypto");
 
-        modelBuilder.Entity<Customers>(e =>
+        modelBuilder.Entity<Party>(e =>
         {
-            e.ToTable("customers", tb => tb.HasCheckConstraint("customers_type_check", "\"type\" IN ('person','company')"));
+            e.ToTable("parties", tb => tb.HasCheckConstraint("parties_type_check", "\"type\" IN ('person','company')"));
             e.HasKey(x => x.Id);
             e.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
             e.Property(x => x.Type).HasColumnName("type").IsRequired();
@@ -47,25 +47,37 @@ public class AppDbContext : DbContext
             e.Property(x => x.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("now()").ValueGeneratedOnAdd();
         });
 
-        modelBuilder.Entity<People>(e =>
+        modelBuilder.Entity<Person>(e =>
         {
-            e.ToTable("people");
-            e.HasKey(x => x.CustomerId);
-            e.Property(x => x.CustomerId).HasColumnName("customer_id");
+            e.ToTable("people", tb =>
+            {
+                tb.HasCheckConstraint("people_tax_no_format_check", "\"tax_no\" IS NULL OR \"tax_no\" ~ '^[0-9]{8}$'");
+                tb.HasCheckConstraint("people_emso_format_check", "\"emso\" IS NULL OR \"emso\" ~ '^[0-9]{13}$'");
+            });
+            e.HasKey(x => x.PartyId);
+            e.HasIndex(x => x.TaxNo).IsUnique();
+            e.HasIndex(x => x.Emso).IsUnique();
+            e.Property(x => x.PartyId).HasColumnName("party_id");
             e.Property(x => x.FullName).HasColumnName("full_name").IsRequired();
             e.Property(x => x.DateOfBirth).HasColumnName("date_of_birth");
-            e.Property(x => x.TaxNumber).HasColumnName("tax_number");
-            e.Property(x => x.NationalNo).HasColumnName("national_no");
+            e.Property(x => x.TaxNo).HasColumnName("tax_no").HasMaxLength(8);
+            e.Property(x => x.Emso).HasColumnName("emso").HasMaxLength(13);
         });
 
-        modelBuilder.Entity<Companies>(e =>
+        modelBuilder.Entity<Company>(e =>
         {
-            e.ToTable("companies");
-            e.HasKey(x => x.CustomerId);
-            e.Property(x => x.CustomerId).HasColumnName("customer_id");
+            e.ToTable("companies", tb =>
+            {
+                tb.HasCheckConstraint("companies_tax_no_format_check", "\"tax_no\" IS NULL OR \"tax_no\" ~ '^[0-9]{8}$'");
+                tb.HasCheckConstraint("companies_company_reg_no_format_check", "\"company_reg_no\" IS NULL OR \"company_reg_no\" ~ '^[0-9]{8}$'");
+            });
+            e.HasKey(x => x.PartyId);
+            e.HasIndex(x => x.TaxNo).IsUnique();
+            e.HasIndex(x => x.CompanyRegNo).IsUnique();
+            e.Property(x => x.PartyId).HasColumnName("party_id");
             e.Property(x => x.CompanyName).HasColumnName("company_name").IsRequired();
-            e.Property(x => x.TaxNumber).HasColumnName("tax_number");
-            e.Property(x => x.RegistrationNo).HasColumnName("registration_no");
+            e.Property(x => x.TaxNo).HasColumnName("tax_no").HasMaxLength(8);
+            e.Property(x => x.CompanyRegNo).HasColumnName("company_reg_no").HasMaxLength(8);
         });
 
         modelBuilder.Entity<Users>(e =>
@@ -155,7 +167,7 @@ public class AppDbContext : DbContext
             e.ToTable("visits");
             e.HasKey(x => x.Id);
             e.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
-            e.Property(x => x.CustomerId).HasColumnName("customer_id").IsRequired();
+            e.Property(x => x.PartyId).HasColumnName("party_id").IsRequired();
             e.Property(x => x.VehicleId).HasColumnName("vehicle_id");
             e.Property(x => x.VisitedAt).HasColumnName("visited_at").HasDefaultValueSql("now()").ValueGeneratedOnAdd();
             e.Property(x => x.HandledByUserId).HasColumnName("handled_by_user_id");
@@ -181,7 +193,7 @@ public class AppDbContext : DbContext
             e.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
             e.Property(x => x.VisitOperationId).HasColumnName("visit_operation_id").IsRequired();
             e.Property(x => x.VehicleId).HasColumnName("vehicle_id").IsRequired();
-            e.Property(x => x.CustomerId).HasColumnName("customer_id").IsRequired();
+            e.Property(x => x.PartyId).HasColumnName("party_id").IsRequired();
             e.Property(x => x.ValidFrom).HasColumnName("valid_from").IsRequired();
             e.Property(x => x.ValidTo).HasColumnName("valid_to");
         });
@@ -193,7 +205,7 @@ public class AppDbContext : DbContext
             e.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
             e.Property(x => x.VisitOperationId).HasColumnName("visit_operation_id").IsRequired();
             e.Property(x => x.VehicleId).HasColumnName("vehicle_id").IsRequired();
-            e.Property(x => x.CustomerId).HasColumnName("customer_id").IsRequired();
+            e.Property(x => x.PartyId).HasColumnName("party_id").IsRequired();
             e.Property(x => x.ValidFrom).HasColumnName("valid_from").IsRequired();
             e.Property(x => x.ValidTo).HasColumnName("valid_to");
             e.Property(x => x.RegistrationNo).HasColumnName("registration_no");
@@ -202,14 +214,13 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Plate>(e =>
         {
-            e.ToTable("plates");
+            e.ToTable("plates", tb => tb.HasCheckConstraint("plates_type_check",
+                "\"plate_type\" IN ('standard','custom','diplomatic','military','police','temporary','test','export','agricultural','trailer','moped')"));
             e.HasKey(x => x.Id);
             e.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
-            e.Property(x => x.PlateNumber).HasColumnName("plate_number").IsRequired();
-            e.HasIndex(x => x.PlateNumber).IsUnique();
-            e.Property(x => x.RegionCode).HasColumnName("region_code").IsRequired();
-            e.Property(x => x.Active).HasColumnName("active").HasDefaultValue(true).IsRequired();
-            e.Property(x => x.Notes).HasColumnName("notes");
+            e.Property(x => x.PlateNo).HasColumnName("plate_no").IsRequired();
+            e.HasIndex(x => x.PlateNo).IsUnique();
+            e.Property(x => x.PlateType).HasColumnName("plate_type").IsRequired();
         });
 
         modelBuilder.Entity<PlateAssignment>(e =>
@@ -255,7 +266,7 @@ public class AppDbContext : DbContext
             e.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
             e.Property(x => x.VisitOperationId).HasColumnName("visit_operation_id").IsRequired();
             e.Property(x => x.VehicleId).HasColumnName("vehicle_id").IsRequired();
-            e.Property(x => x.CustomerId).HasColumnName("customer_id").IsRequired();
+            e.Property(x => x.PartyId).HasColumnName("party_id").IsRequired();
             e.Property(x => x.InsurerId).HasColumnName("insurer_id").IsRequired();
             e.Property(x => x.TemplateId).HasColumnName("template_id").IsRequired();
             e.Property(x => x.PolicyNo).HasColumnName("policy_no");
@@ -335,28 +346,28 @@ public class AppDbContext : DbContext
             .HasForeignKey(x => x.SessionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Customers>()
+        modelBuilder.Entity<Party>()
             .HasOne(x => x.Person)
-            .WithOne(x => x.Customer)
-            .HasForeignKey<People>(x => x.CustomerId)
+            .WithOne(x => x.Party)
+            .HasForeignKey<Person>(x => x.PartyId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Customers>()
+        modelBuilder.Entity<Party>()
             .HasOne(x => x.Company)
-            .WithOne(x => x.Customer)
-            .HasForeignKey<Companies>(x => x.CustomerId)
+            .WithOne(x => x.Party)
+            .HasForeignKey<Company>(x => x.PartyId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Customers>()
+        modelBuilder.Entity<Party>()
             .HasMany(x => x.VehicleOwnerships)
-            .WithOne(x => x.Customer)
-            .HasForeignKey(x => x.CustomerId)
+            .WithOne(x => x.Party)
+            .HasForeignKey(x => x.PartyId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Customers>()
+        modelBuilder.Entity<Party>()
             .HasMany(x => x.Visits)
-            .WithOne(x => x.Customer)
-            .HasForeignKey(x => x.CustomerId)
+            .WithOne(x => x.Party)
+            .HasForeignKey(x => x.PartyId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Users>()
@@ -486,3 +497,5 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
+
+

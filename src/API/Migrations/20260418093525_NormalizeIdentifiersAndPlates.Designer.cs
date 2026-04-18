@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260418093525_NormalizeIdentifiersAndPlates")]
+    partial class NormalizeIdentifiersAndPlates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,12 +98,6 @@ namespace API.Migrations
                         .HasColumnName("tax_no");
 
                     b.HasKey("PartyId");
-
-                    b.HasIndex("CompanyRegNo")
-                        .IsUnique();
-
-                    b.HasIndex("TaxNo")
-                        .IsUnique();
 
                     b.ToTable("companies", "tehnicni", t =>
                         {
@@ -438,12 +435,6 @@ namespace API.Migrations
                         .HasColumnName("tax_no");
 
                     b.HasKey("PartyId");
-
-                    b.HasIndex("Emso")
-                        .IsUnique();
-
-                    b.HasIndex("TaxNo")
-                        .IsUnique();
 
                     b.ToTable("people", "tehnicni", t =>
                         {

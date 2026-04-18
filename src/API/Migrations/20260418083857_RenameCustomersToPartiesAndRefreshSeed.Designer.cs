@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260418083857_RenameCustomersToPartiesAndRefreshSeed")]
+    partial class RenameCustomersToPartiesAndRefreshSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,29 +88,16 @@ namespace API.Migrations
                         .HasColumnName("company_name");
 
                     b.Property<string>("CompanyRegNo")
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)")
+                        .HasColumnType("text")
                         .HasColumnName("company_reg_no");
 
                     b.Property<string>("TaxNo")
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)")
+                        .HasColumnType("text")
                         .HasColumnName("tax_no");
 
                     b.HasKey("PartyId");
 
-                    b.HasIndex("CompanyRegNo")
-                        .IsUnique();
-
-                    b.HasIndex("TaxNo")
-                        .IsUnique();
-
-                    b.ToTable("companies", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("companies_company_reg_no_format_check", "\"company_reg_no\" IS NULL OR \"company_reg_no\" ~ '^[0-9]{8}$'");
-
-                            t.HasCheckConstraint("companies_tax_no_format_check", "\"tax_no\" IS NULL OR \"tax_no\" ~ '^[0-9]{8}$'");
-                        });
+                    b.ToTable("companies", "tehnicni");
                 });
 
             modelBuilder.Entity("API.Models.Homologation", b =>
@@ -422,35 +412,22 @@ namespace API.Migrations
                         .HasColumnType("date")
                         .HasColumnName("date_of_birth");
 
-                    b.Property<string>("Emso")
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)")
-                        .HasColumnName("emso");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("full_name");
 
+                    b.Property<string>("NationalNo")
+                        .HasColumnType("text")
+                        .HasColumnName("national_no");
+
                     b.Property<string>("TaxNo")
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)")
+                        .HasColumnType("text")
                         .HasColumnName("tax_no");
 
                     b.HasKey("PartyId");
 
-                    b.HasIndex("Emso")
-                        .IsUnique();
-
-                    b.HasIndex("TaxNo")
-                        .IsUnique();
-
-                    b.ToTable("people", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("people_emso_format_check", "\"emso\" IS NULL OR \"emso\" ~ '^[0-9]{13}$'");
-
-                            t.HasCheckConstraint("people_tax_no_format_check", "\"tax_no\" IS NULL OR \"tax_no\" ~ '^[0-9]{8}$'");
-                        });
+                    b.ToTable("people", "tehnicni");
                 });
 
             modelBuilder.Entity("API.Models.Plate", b =>
@@ -461,25 +438,32 @@ namespace API.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("PlateNo")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("plate_no");
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
 
-                    b.Property<string>("PlateType")
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("PlateNumber")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("plate_type");
+                        .HasColumnName("plate_number");
+
+                    b.Property<string>("RegionCode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("region_code");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlateNo")
+                    b.HasIndex("PlateNumber")
                         .IsUnique();
 
-                    b.ToTable("plates", "tehnicni", t =>
-                        {
-                            t.HasCheckConstraint("plates_type_check", "\"plate_type\" IN ('standard','custom','diplomatic','military','police','temporary','test','export','agricultural','trailer','moped')");
-                        });
+                    b.ToTable("plates", "tehnicni");
                 });
 
             modelBuilder.Entity("API.Models.PlateAssignment", b =>

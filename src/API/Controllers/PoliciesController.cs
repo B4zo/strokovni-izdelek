@@ -23,21 +23,21 @@ public class PoliciesController : ControllerBase
         [FromQuery] string? customer = null,
         [FromQuery] string? insurer = null,
         [FromQuery] Guid? vehicleId = null,
-        [FromQuery] Guid? customerId = null,
+        [FromQuery] Guid? partyId = null,
         [FromQuery] bool currentOnly = false)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var query = _db.InsurancePolicies
             .AsNoTracking()
             .Include(x => x.Vehicle)
-            .Include(x => x.Customer).ThenInclude(x => x.Person)
-            .Include(x => x.Customer).ThenInclude(x => x.Company)
+            .Include(x => x.Party).ThenInclude(x => x.Person)
+            .Include(x => x.Party).ThenInclude(x => x.Company)
             .Include(x => x.Insurer)
             .Include(x => x.Template)
             .AsQueryable();
 
         if (vehicleId is not null) query = query.Where(x => x.VehicleId == vehicleId);
-        if (customerId is not null) query = query.Where(x => x.CustomerId == customerId);
+        if (partyId is not null) query = query.Where(x => x.PartyId == partyId);
 
         if (!string.IsNullOrWhiteSpace(q))
         {
@@ -46,8 +46,8 @@ public class PoliciesController : ControllerBase
                 (x.PolicyNo != null && EF.Functions.ILike(x.PolicyNo, $"%{q}%")) ||
                 EF.Functions.ILike(x.Vehicle.Vin, $"%{q}%") ||
                 EF.Functions.ILike(x.Insurer.Name, $"%{q}%") ||
-                (x.Customer.Person != null && EF.Functions.ILike(x.Customer.Person.FullName, $"%{q}%")) ||
-                (x.Customer.Company != null && EF.Functions.ILike(x.Customer.Company.CompanyName, $"%{q}%")));
+                (x.Party.Person != null && EF.Functions.ILike(x.Party.Person.FullName, $"%{q}%")) ||
+                (x.Party.Company != null && EF.Functions.ILike(x.Party.Company.CompanyName, $"%{q}%")));
         }
 
         if (!string.IsNullOrWhiteSpace(policyNo))
@@ -66,8 +66,8 @@ public class PoliciesController : ControllerBase
         {
             customer = customer.Trim();
             query = query.Where(x =>
-                (x.Customer.Person != null && EF.Functions.ILike(x.Customer.Person.FullName, $"%{customer}%")) ||
-                (x.Customer.Company != null && EF.Functions.ILike(x.Customer.Company.CompanyName, $"%{customer}%")));
+                (x.Party.Person != null && EF.Functions.ILike(x.Party.Person.FullName, $"%{customer}%")) ||
+                (x.Party.Company != null && EF.Functions.ILike(x.Party.Company.CompanyName, $"%{customer}%")));
         }
 
         if (!string.IsNullOrWhiteSpace(insurer))
@@ -86,8 +86,8 @@ public class PoliciesController : ControllerBase
                 x.VehicleId,
                 x.Vehicle.Vin,
                 ((x.Vehicle.Make ?? "") + " " + (x.Vehicle.Model ?? "")).Trim(),
-                x.CustomerId,
-                x.Customer.Person != null ? x.Customer.Person.FullName : x.Customer.Company != null ? x.Customer.Company.CompanyName : "",
+                x.PartyId,
+                x.Party.Person != null ? x.Party.Person.FullName : x.Party.Company != null ? x.Party.Company.CompanyName : "",
                 x.InsurerId,
                 x.Insurer.Name,
                 x.TemplateId,
@@ -111,7 +111,7 @@ public class PoliciesController : ControllerBase
         {
             VisitOperationId = req.VisitOperationId,
             VehicleId = req.VehicleId,
-            CustomerId = req.CustomerId,
+            PartyId = req.PartyId,
             InsurerId = req.InsurerId,
             TemplateId = req.TemplateId,
             PolicyNo = req.PolicyNo,
@@ -126,3 +126,4 @@ public class PoliciesController : ControllerBase
         return Ok(entity);
     }
 }
+

@@ -4,7 +4,7 @@ namespace API.Models
     {
         public Guid Id { get; set; }
 
-        public Guid CustomerId { get; set; }
+        public Guid PartyId { get; set; }
         public Guid VehicleId { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
@@ -16,7 +16,7 @@ namespace API.Models
 
         public string? Notes { get; set; }
 
-        public Customers Customer { get; set; } = null!;
+        public Party Party { get; set; } = null!;
         public Vehicles Vehicle { get; set; } = null!;
 
         public Users? CreatedByUser { get; set; }
@@ -30,3 +30,4 @@ namespace API.Models
         public ICollection<VehicleHomologations> VehicleHomologations { get; set; } = new List<VehicleHomologations>();
     }
 }
+

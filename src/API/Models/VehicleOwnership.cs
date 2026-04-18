@@ -7,8 +7,9 @@ public sealed class VehicleOwnership
     public VisitOperation VisitOperation { get; set; } = null!;
     public Guid VehicleId { get; set; }
     public Vehicle Vehicle { get; set; } = null!;
-    public Guid CustomerId { get; set; }
-    public Customers Customer { get; set; } = null!;
+    public Guid PartyId { get; set; }
+    public Party Party { get; set; } = null!;
     public DateOnly ValidFrom { get; set; }
     public DateOnly? ValidTo { get; set; }
 }
+

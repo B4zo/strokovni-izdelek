@@ -1,6 +1,6 @@
-namespace App.DTOs.Customers;
+namespace App.DTOs.Parties;
 
-public sealed partial record CustomerDto(
+public sealed partial record PartyDto(
     Guid Id,
     string Type,
     string? Address,
@@ -11,7 +11,7 @@ public sealed partial record CustomerDto(
     CompanyDto? Company
 );
 
-public sealed partial record CustomerDto
+public sealed partial record PartyDto
 {
     public string DisplayName => Type == "person"
         ? Person?.FullName ?? "(oseba)"
@@ -19,26 +19,27 @@ public sealed partial record CustomerDto
 
     public DateOnly? DateOfBirth => Person?.DateOfBirth;
 
-    public string? TaxNumber => Type == "person"
-        ? Person?.TaxNumber
-        : Company?.TaxNumber;
+    public string? TaxNo => Type == "person"
+        ? Person?.TaxNo
+        : Company?.TaxNo;
 
-    public string? NationalNo => Person?.NationalNo;
+    public string? Emso => Person?.Emso;
 
-    public string? RegistrationNo => Company?.RegistrationNo;
+    public string? CompanyRegNo => Company?.CompanyRegNo;
 }
 
 public sealed record PersonDto(
-    Guid CustomerId,
+    Guid PartyId,
     string FullName,
     DateOnly? DateOfBirth,
-    string? TaxNumber,
-    string? NationalNo
+    string? TaxNo,
+    string? Emso
 );
 
 public sealed record CompanyDto(
-    Guid CustomerId,
+    Guid PartyId,
     string CompanyName,
-    string? TaxNumber,
-    string? RegistrationNo
+    string? TaxNo,
+    string? CompanyRegNo
 );
+

@@ -3,7 +3,7 @@ namespace API.DTOs.Policies;
 public sealed record InsurancePolicyUpsertRequest(
     Guid VisitOperationId,
     Guid VehicleId,
-    Guid CustomerId,
+    Guid PartyId,
     Guid InsurerId,
     Guid TemplateId,
     string? PolicyNo,
@@ -13,3 +13,4 @@ public sealed record InsurancePolicyUpsertRequest(
     string Currency,
     string? Notes
 );
+

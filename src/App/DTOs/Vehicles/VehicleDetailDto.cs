@@ -8,8 +8,8 @@ public sealed record VehicleDetailDto(
 
 public sealed record VehicleOwnerHistoryDto(
     Guid Id,
-    Guid CustomerId,
-    string CustomerDisplay,
+    Guid PartyId,
+    string PartyDisplay,
     DateOnly ValidFrom,
     DateOnly? ValidTo,
     bool IsCurrent
@@ -17,11 +17,12 @@ public sealed record VehicleOwnerHistoryDto(
 
 public sealed record VehicleRegistrationHistoryDto(
     Guid Id,
-    Guid CustomerId,
-    string CustomerDisplay,
+    Guid PartyId,
+    string PartyDisplay,
     string? RegistrationNo,
-    string? PlateNumber,
+    string? PlateNo,
     DateOnly ValidFrom,
     DateOnly? ValidTo,
     bool IsCurrent
 );
+

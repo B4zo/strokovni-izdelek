@@ -102,29 +102,35 @@ using (var scope = app.Services.CreateScope())
             ALTER DEFAULT PRIVILEGES FOR ROLE db_admin IN SCHEMA tehnicni
             GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO app;
 
-            CREATE INDEX IF NOT EXISTS ix_customers_address_trgm
-            ON tehnicni.customers USING gin (address gin_trgm_ops);
+            CREATE INDEX IF NOT EXISTS ix_parties_address_trgm
+            ON tehnicni.parties USING gin (address gin_trgm_ops);
 
-            CREATE INDEX IF NOT EXISTS ix_customers_phone_trgm
-            ON tehnicni.customers USING gin (phone gin_trgm_ops);
+            CREATE INDEX IF NOT EXISTS ix_parties_phone_trgm
+            ON tehnicni.parties USING gin (phone gin_trgm_ops);
 
-            CREATE INDEX IF NOT EXISTS ix_customers_email_trgm
-            ON tehnicni.customers USING gin (email gin_trgm_ops);
+            CREATE INDEX IF NOT EXISTS ix_parties_email_trgm
+            ON tehnicni.parties USING gin (email gin_trgm_ops);
 
             CREATE INDEX IF NOT EXISTS ix_people_full_name_trgm
             ON tehnicni.people USING gin (full_name gin_trgm_ops);
 
-            CREATE INDEX IF NOT EXISTS ix_people_tax_number_trgm
-            ON tehnicni.people USING gin (tax_number gin_trgm_ops);
+            CREATE INDEX IF NOT EXISTS ix_people_tax_no_trgm
+            ON tehnicni.people USING gin (tax_no gin_trgm_ops);
+
+            CREATE INDEX IF NOT EXISTS ix_people_emso_trgm
+            ON tehnicni.people USING gin (emso gin_trgm_ops);
 
             CREATE INDEX IF NOT EXISTS ix_companies_company_name_trgm
             ON tehnicni.companies USING gin (company_name gin_trgm_ops);
 
-            CREATE INDEX IF NOT EXISTS ix_companies_tax_number_trgm
-            ON tehnicni.companies USING gin (tax_number gin_trgm_ops);
+            CREATE INDEX IF NOT EXISTS ix_companies_tax_no_trgm
+            ON tehnicni.companies USING gin (tax_no gin_trgm_ops);
 
-            CREATE INDEX IF NOT EXISTS ix_companies_registration_no_trgm
-            ON tehnicni.companies USING gin (registration_no gin_trgm_ops);
+            CREATE INDEX IF NOT EXISTS ix_companies_company_reg_no_trgm
+            ON tehnicni.companies USING gin (company_reg_no gin_trgm_ops);
+
+            CREATE INDEX IF NOT EXISTS ix_plates_plate_no_trgm
+            ON tehnicni.plates USING gin (plate_no gin_trgm_ops);
             """);
     }
 
@@ -138,3 +144,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

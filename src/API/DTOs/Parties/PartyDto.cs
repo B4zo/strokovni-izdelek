@@ -1,6 +1,6 @@
-namespace API.DTOs.Customers;
+namespace API.DTOs.Parties;
 
-public sealed record CustomerDto(
+public sealed record PartyDto(
     Guid Id,
     string Type,
     string? Address,
@@ -12,16 +12,17 @@ public sealed record CustomerDto(
 );
 
 public sealed record PersonDto(
-    Guid CustomerId,
+    Guid PartyId,
     string FullName,
     DateOnly? DateOfBirth,
-    string? TaxNumber,
-    string? NationalNo
+    string? TaxNo,
+    string? Emso
 );
 
 public sealed record CompanyDto(
-    Guid CustomerId,
+    Guid PartyId,
     string CompanyName,
-    string? TaxNumber,
-    string? RegistrationNo
+    string? TaxNo,
+    string? CompanyRegNo
 );
+

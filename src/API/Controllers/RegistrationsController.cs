@@ -22,24 +22,24 @@ public class RegistrationsController : ControllerBase
         [FromQuery] string? vin = null,
         [FromQuery] string? customer = null,
         [FromQuery] Guid? vehicleId = null,
-        [FromQuery] Guid? customerId = null,
+        [FromQuery] Guid? partyId = null,
         [FromQuery] bool currentOnly = false)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var query = _db.VehicleRegistrations
             .AsNoTracking()
             .Include(x => x.Vehicle)
-            .Include(x => x.Customer).ThenInclude(x => x.Person)
-            .Include(x => x.Customer).ThenInclude(x => x.Company)
+            .Include(x => x.Party).ThenInclude(x => x.Person)
+            .Include(x => x.Party).ThenInclude(x => x.Company)
             .Include(x => x.PlateAssignments).ThenInclude(x => x.Plate)
             .AsQueryable();
 
         if (vehicleId is not null) query = query.Where(x => x.VehicleId == vehicleId);
-        if (customerId is not null) query = query.Where(x => x.CustomerId == customerId);
+        if (partyId is not null) query = query.Where(x => x.PartyId == partyId);
         if (!string.IsNullOrWhiteSpace(plate))
         {
             plate = plate.Trim();
-            query = query.Where(x => x.PlateAssignments.Any(pa => EF.Functions.ILike(pa.Plate.PlateNumber, $"%{plate}%")));
+            query = query.Where(x => x.PlateAssignments.Any(pa => EF.Functions.ILike(pa.Plate.PlateNo, $"%{plate}%")));
         }
         if (!string.IsNullOrWhiteSpace(registrationNo))
         {
@@ -55,8 +55,8 @@ public class RegistrationsController : ControllerBase
         {
             customer = customer.Trim();
             query = query.Where(x =>
-                (x.Customer.Person != null && EF.Functions.ILike(x.Customer.Person.FullName, $"%{customer}%")) ||
-                (x.Customer.Company != null && EF.Functions.ILike(x.Customer.Company.CompanyName, $"%{customer}%")));
+                (x.Party.Person != null && EF.Functions.ILike(x.Party.Person.FullName, $"%{customer}%")) ||
+                (x.Party.Company != null && EF.Functions.ILike(x.Party.Company.CompanyName, $"%{customer}%")));
         }
         if (currentOnly)
             query = query.Where(x => x.ValidFrom <= today && (x.ValidTo == null || x.ValidTo >= today));
@@ -68,12 +68,12 @@ public class RegistrationsController : ControllerBase
                 x.VehicleId,
                 x.Vehicle.Vin,
                 ((x.Vehicle.Make ?? "") + " " + (x.Vehicle.Model ?? "")).Trim(),
-                x.CustomerId,
-                x.Customer.Person != null ? x.Customer.Person.FullName : x.Customer.Company != null ? x.Customer.Company.CompanyName : "",
+                x.PartyId,
+                x.Party.Person != null ? x.Party.Person.FullName : x.Party.Company != null ? x.Party.Company.CompanyName : "",
                 x.RegistrationNo,
                 x.PlateAssignments
                     .OrderByDescending(pa => pa.ValidFrom)
-                    .Select(pa => pa.Plate.PlateNumber)
+                    .Select(pa => pa.Plate.PlateNo)
                     .FirstOrDefault(),
                 x.ValidFrom,
                 x.ValidTo,
@@ -91,7 +91,7 @@ public class RegistrationsController : ControllerBase
         {
             VisitOperationId = req.VisitOperationId,
             VehicleId = req.VehicleId,
-            CustomerId = req.CustomerId,
+            PartyId = req.PartyId,
             ValidFrom = req.ValidFrom,
             ValidTo = req.ValidTo,
             RegistrationNo = req.RegistrationNo,
@@ -102,3 +102,4 @@ public class RegistrationsController : ControllerBase
         return Ok(entity);
     }
 }
+

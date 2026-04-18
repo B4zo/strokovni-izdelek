@@ -1,14 +1,15 @@
-namespace API.DTOs.Customers;
+namespace API.DTOs.Parties;
 
-public sealed record CustomerUpsertRequest(
+public sealed record PartyUpsertRequest(
     string Type,
     string? Address,
     string? Phone,
     string? Email,
     string? FullName,
     DateOnly? DateOfBirth,
-    string? TaxNumber,
-    string? NationalNo,
+    string? TaxNo,
+    string? Emso,
     string? CompanyName,
-    string? RegistrationNo
+    string? CompanyRegNo
 );
+

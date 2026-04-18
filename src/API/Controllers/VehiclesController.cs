@@ -83,7 +83,7 @@ public class VehiclesController : ControllerBase
                 x.OwnershipHistory
                     .Where(h => h.ValidFrom <= today && (h.ValidTo == null || h.ValidTo >= today))
                     .OrderByDescending(h => h.ValidFrom)
-                    .Select(h => h.Customer.Person != null ? h.Customer.Person.FullName : h.Customer.Company != null ? h.Customer.Company.CompanyName : "")
+                    .Select(h => h.Party.Person != null ? h.Party.Person.FullName : h.Party.Company != null ? h.Party.Company.CompanyName : "")
                     .FirstOrDefault(),
                 x.Registrations
                     .Where(r => r.ValidFrom <= today && (r.ValidTo == null || r.ValidTo >= today))
@@ -94,7 +94,7 @@ public class VehiclesController : ControllerBase
                     .Where(r => r.ValidFrom <= today && (r.ValidTo == null || r.ValidTo >= today))
                     .SelectMany(r => r.PlateAssignments)
                     .OrderByDescending(pa => pa.ValidFrom)
-                    .Select(pa => pa.Plate.PlateNumber)
+                    .Select(pa => pa.Plate.PlateNo)
                     .FirstOrDefault()))
             .ToListAsync();
 
@@ -108,10 +108,10 @@ public class VehiclesController : ControllerBase
         var vehicle = await _db.Vehicles
             .AsNoTracking()
             .Include(x => x.Category)
-            .Include(x => x.OwnershipHistory).ThenInclude(x => x.Customer).ThenInclude(x => x.Person)
-            .Include(x => x.OwnershipHistory).ThenInclude(x => x.Customer).ThenInclude(x => x.Company)
-            .Include(x => x.Registrations).ThenInclude(x => x.Customer).ThenInclude(x => x.Person)
-            .Include(x => x.Registrations).ThenInclude(x => x.Customer).ThenInclude(x => x.Company)
+            .Include(x => x.OwnershipHistory).ThenInclude(x => x.Party).ThenInclude(x => x.Person)
+            .Include(x => x.OwnershipHistory).ThenInclude(x => x.Party).ThenInclude(x => x.Company)
+            .Include(x => x.Registrations).ThenInclude(x => x.Party).ThenInclude(x => x.Person)
+            .Include(x => x.Registrations).ThenInclude(x => x.Party).ThenInclude(x => x.Company)
             .Include(x => x.Registrations).ThenInclude(x => x.PlateAssignments).ThenInclude(x => x.Plate)
             .SingleOrDefaultAsync(x => x.Id == id);
 
@@ -132,7 +132,7 @@ public class VehiclesController : ControllerBase
                 vehicle.OwnershipHistory
                     .Where(h => h.ValidFrom <= today && (h.ValidTo == null || h.ValidTo >= today))
                     .OrderByDescending(h => h.ValidFrom)
-                    .Select(h => h.Customer.Person != null ? h.Customer.Person.FullName : h.Customer.Company != null ? h.Customer.Company.CompanyName : "")
+                    .Select(h => h.Party.Person != null ? h.Party.Person.FullName : h.Party.Company != null ? h.Party.Company.CompanyName : "")
                     .FirstOrDefault(),
                 vehicle.Registrations
                     .Where(r => r.ValidFrom <= today && (r.ValidTo == null || r.ValidTo >= today))
@@ -143,14 +143,14 @@ public class VehiclesController : ControllerBase
                     .Where(r => r.ValidFrom <= today && (r.ValidTo == null || r.ValidTo >= today))
                     .SelectMany(r => r.PlateAssignments)
                     .OrderByDescending(pa => pa.ValidFrom)
-                    .Select(pa => pa.Plate.PlateNumber)
+                    .Select(pa => pa.Plate.PlateNo)
                     .FirstOrDefault()),
             vehicle.OwnershipHistory
                 .OrderByDescending(x => x.ValidFrom)
                 .Select(x => new VehicleOwnerHistoryDto(
                     x.Id,
-                    x.CustomerId,
-                    x.Customer.Person != null ? x.Customer.Person.FullName : x.Customer.Company != null ? x.Customer.Company.CompanyName : "",
+                    x.PartyId,
+                    x.Party.Person != null ? x.Party.Person.FullName : x.Party.Company != null ? x.Party.Company.CompanyName : "",
                     x.ValidFrom,
                     x.ValidTo,
                     x.ValidFrom <= today && (x.ValidTo == null || x.ValidTo >= today)))
@@ -159,10 +159,10 @@ public class VehiclesController : ControllerBase
                 .OrderByDescending(x => x.ValidFrom)
                 .Select(x => new VehicleRegistrationHistoryDto(
                     x.Id,
-                    x.CustomerId,
-                    x.Customer.Person != null ? x.Customer.Person.FullName : x.Customer.Company != null ? x.Customer.Company.CompanyName : "",
+                    x.PartyId,
+                    x.Party.Person != null ? x.Party.Person.FullName : x.Party.Company != null ? x.Party.Company.CompanyName : "",
                     x.RegistrationNo,
-                    x.PlateAssignments.OrderByDescending(pa => pa.ValidFrom).Select(pa => pa.Plate.PlateNumber).FirstOrDefault(),
+                    x.PlateAssignments.OrderByDescending(pa => pa.ValidFrom).Select(pa => pa.Plate.PlateNo).FirstOrDefault(),
                     x.ValidFrom,
                     x.ValidTo,
                     x.ValidFrom <= today && (x.ValidTo == null || x.ValidTo >= today)))
@@ -224,3 +224,4 @@ public class VehiclesController : ControllerBase
         return NoContent();
     }
 }
+

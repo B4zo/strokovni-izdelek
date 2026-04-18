@@ -21,7 +21,7 @@ partial class PoliciesView
         flowSearch = new FlowLayoutPanel();
         txtSearch = new TextBox();
         txtVin = new TextBox();
-        txtCustomerOrInsurer = new TextBox();
+        txtPartyOrInsurer = new TextBox();
         btnSearch = new Button();
         btnClear = new Button();
         lblSearchTitle = new Label();
@@ -30,7 +30,7 @@ partial class PoliciesView
         btnRefresh = new Button();
         panelEditorFields = new Panel();
         txtInsurer = new TextBox();
-        txtCustomer = new TextBox();
+        txtParty = new TextBox();
         txtVehicle = new TextBox();
         txtPolicyNo = new TextBox();
         lblEditorTitle = new Label();
@@ -91,7 +91,7 @@ partial class PoliciesView
         // 
         flowSearch.Controls.Add(txtSearch);
         flowSearch.Controls.Add(txtVin);
-        flowSearch.Controls.Add(txtCustomerOrInsurer);
+        flowSearch.Controls.Add(txtPartyOrInsurer);
         flowSearch.Controls.Add(btnSearch);
         flowSearch.Controls.Add(btnClear);
         flowSearch.Location = new Point(15, 38);
@@ -115,13 +115,13 @@ partial class PoliciesView
         txtVin.Size = new Size(180, 23);
         txtVin.TabIndex = 1;
         // 
-        // txtCustomerOrInsurer
+        // txtPartyOrInsurer
         // 
-        txtCustomerOrInsurer.Location = new Point(189, 32);
-        txtCustomerOrInsurer.Name = "txtCustomerOrInsurer";
-        txtCustomerOrInsurer.PlaceholderText = "Stranka ali zavarovalnica";
-        txtCustomerOrInsurer.Size = new Size(210, 23);
-        txtCustomerOrInsurer.TabIndex = 2;
+        txtPartyOrInsurer.Location = new Point(189, 32);
+        txtPartyOrInsurer.Name = "txtPartyOrInsurer";
+        txtPartyOrInsurer.PlaceholderText = "Stranka ali zavarovalnica";
+        txtPartyOrInsurer.Size = new Size(210, 23);
+        txtPartyOrInsurer.TabIndex = 2;
         // 
         // btnSearch
         // 
@@ -188,7 +188,7 @@ partial class PoliciesView
         // 
         panelEditorFields.BorderStyle = BorderStyle.FixedSingle;
         panelEditorFields.Controls.Add(txtInsurer);
-        panelEditorFields.Controls.Add(txtCustomer);
+        panelEditorFields.Controls.Add(txtParty);
         panelEditorFields.Controls.Add(txtVehicle);
         panelEditorFields.Controls.Add(txtPolicyNo);
         panelEditorFields.Location = new Point(16, 38);
@@ -205,14 +205,14 @@ partial class PoliciesView
         txtInsurer.Size = new Size(280, 23);
         txtInsurer.TabIndex = 3;
         // 
-        // txtCustomer
+        // txtParty
         // 
-        txtCustomer.Location = new Point(15, 73);
-        txtCustomer.Name = "txtCustomer";
-        txtCustomer.PlaceholderText = "Stranka";
-        txtCustomer.ReadOnly = true;
-        txtCustomer.Size = new Size(280, 23);
-        txtCustomer.TabIndex = 2;
+        txtParty.Location = new Point(15, 73);
+        txtParty.Name = "txtParty";
+        txtParty.PlaceholderText = "Stranka";
+        txtParty.ReadOnly = true;
+        txtParty.Size = new Size(280, 23);
+        txtParty.TabIndex = 2;
         // 
         // txtVehicle
         // 
@@ -268,7 +268,7 @@ partial class PoliciesView
     private FlowLayoutPanel flowSearch;
     private TextBox txtSearch;
     private TextBox txtVin;
-    private TextBox txtCustomerOrInsurer;
+    private TextBox txtPartyOrInsurer;
     private Button btnSearch;
     private Button btnClear;
     private Label lblSearchTitle;
@@ -277,8 +277,9 @@ partial class PoliciesView
     private Button btnRefresh;
     private Panel panelEditorFields;
     private TextBox txtInsurer;
-    private TextBox txtCustomer;
+    private TextBox txtParty;
     private TextBox txtVehicle;
     private TextBox txtPolicyNo;
     private Label lblEditorTitle;
 }
+

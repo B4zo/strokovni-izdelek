@@ -5,8 +5,8 @@ public sealed record PolicyDto(
     Guid VehicleId,
     string VehicleVin,
     string VehicleDisplay,
-    Guid CustomerId,
-    string CustomerDisplay,
+    Guid PartyId,
+    string PartyDisplay,
     Guid InsurerId,
     string InsurerName,
     Guid TemplateId,
@@ -19,3 +19,4 @@ public sealed record PolicyDto(
     string Currency,
     string? Notes
 );
+

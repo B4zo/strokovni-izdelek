@@ -5,7 +5,7 @@ namespace App.Forms;
 
 public partial class MainForm : Form
 {
-    private readonly CustomersView _customersView = new();
+    private readonly PartiesView _partiesView = new();
     private readonly AccountView _accountView = new();
     private readonly VehicleRegistryView _vehicleRegistryView = new();
     private readonly PoliciesView _policiesView = new();
@@ -15,7 +15,7 @@ public partial class MainForm : Form
     {
         InitializeComponent();
         FormClosing += MainForm_FormClosing;
-        ShowCustomers();
+        ShowParties();
     }
 
     private void ShowView(Control view)
@@ -25,9 +25,9 @@ public partial class MainForm : Form
         panelContent.Controls.Add(view);
     }
 
-    private void ShowCustomers() => ShowView(_customersView);
+    private void ShowParties() => ShowView(_partiesView);
 
-    private void btnCustomers_Click(object sender, EventArgs e) => ShowCustomers();
+    private void btnParties_Click(object sender, EventArgs e) => ShowParties();
 
     private void btnVehicles_Click(object sender, EventArgs e) => ShowView(_vehicleRegistryView);
 

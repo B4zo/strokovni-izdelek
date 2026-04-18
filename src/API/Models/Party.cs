@@ -1,6 +1,6 @@
 namespace API.Models
 {
-    public sealed class Customers
+    public sealed class Party
     {
         public Guid Id { get; set; }
         public string Type { get; set; } = null!;
@@ -11,10 +11,11 @@ namespace API.Models
 
         public DateTimeOffset CreatedAt { get; set; }
 
-        public People? Person { get; set; }
-        public Companies? Company { get; set; }
+        public Person? Person { get; set; }
+        public Company? Company { get; set; }
 
         public ICollection<VehicleOwnership> VehicleOwnerships { get; set; } = new List<VehicleOwnership>();
         public ICollection<Visit> Visits { get; set; } = new List<Visit>();
     }
 }
+

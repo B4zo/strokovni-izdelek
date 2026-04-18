@@ -20,7 +20,7 @@ partial class MainForm
         btnPolicies = new Button();
         btnRegistrations = new Button();
         btnVehicles = new Button();
-        btnCustomers = new Button();
+        btnParties = new Button();
         panelContent = new Panel();
         statusStrip1 = new StatusStrip();
         toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -34,7 +34,7 @@ partial class MainForm
         panelNav.Controls.Add(btnPolicies);
         panelNav.Controls.Add(btnRegistrations);
         panelNav.Controls.Add(btnVehicles);
-        panelNav.Controls.Add(btnCustomers);
+        panelNav.Controls.Add(btnParties);
         panelNav.Dock = DockStyle.Left;
         panelNav.Location = new Point(0, 0);
         panelNav.Name = "panelNav";
@@ -83,15 +83,15 @@ partial class MainForm
         btnVehicles.UseVisualStyleBackColor = true;
         btnVehicles.Click += btnVehicles_Click;
         // 
-        // btnCustomers
+        // btnParties
         // 
-        btnCustomers.Location = new Point(17, 64);
-        btnCustomers.Name = "btnCustomers";
-        btnCustomers.Size = new Size(189, 50);
-        btnCustomers.TabIndex = 1;
-        btnCustomers.Text = "Stranke";
-        btnCustomers.UseVisualStyleBackColor = true;
-        btnCustomers.Click += btnCustomers_Click;
+        btnParties.Location = new Point(17, 64);
+        btnParties.Name = "btnParties";
+        btnParties.Size = new Size(189, 50);
+        btnParties.TabIndex = 1;
+        btnParties.Text = "Stranke";
+        btnParties.UseVisualStyleBackColor = true;
+        btnParties.Click += btnParties_Click;
         // 
         // panelContent
         // 
@@ -144,8 +144,10 @@ partial class MainForm
     private Button btnPolicies;
     private Button btnRegistrations;
     private Button btnVehicles;
-    private Button btnCustomers;
+    private Button btnParties;
     private Panel panelContent;
     private StatusStrip statusStrip1;
     private ToolStripStatusLabel toolStripStatusLabel1;
 }
+
+

@@ -38,7 +38,7 @@ public partial class VehicleRegistryView : UserControl
     {
         gridOwnership.AutoGenerateColumns = false;
         gridOwnership.Columns.Clear();
-        gridOwnership.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Lastnik", DataPropertyName = nameof(VehicleOwnerHistoryDto.CustomerDisplay), Width = 180 });
+        gridOwnership.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Lastnik", DataPropertyName = nameof(VehicleOwnerHistoryDto.PartyDisplay), Width = 180 });
         gridOwnership.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Od", DataPropertyName = nameof(VehicleOwnerHistoryDto.ValidFrom), Width = 90, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" } });
         gridOwnership.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Do", DataPropertyName = nameof(VehicleOwnerHistoryDto.ValidTo), Width = 90, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" } });
         gridOwnership.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText = "Trenutni", DataPropertyName = nameof(VehicleOwnerHistoryDto.IsCurrent), Width = 70 });
@@ -48,9 +48,9 @@ public partial class VehicleRegistryView : UserControl
     {
         gridRegistrations.AutoGenerateColumns = false;
         gridRegistrations.Columns.Clear();
-        gridRegistrations.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Stranka", DataPropertyName = nameof(VehicleRegistrationHistoryDto.CustomerDisplay), Width = 170 });
+        gridRegistrations.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Stranka", DataPropertyName = nameof(VehicleRegistrationHistoryDto.PartyDisplay), Width = 170 });
         gridRegistrations.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Reg.", DataPropertyName = nameof(VehicleRegistrationHistoryDto.RegistrationNo), Width = 90 });
-        gridRegistrations.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Tablica", DataPropertyName = nameof(VehicleRegistrationHistoryDto.PlateNumber), Width = 90 });
+        gridRegistrations.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Tablica", DataPropertyName = nameof(VehicleRegistrationHistoryDto.PlateNo), Width = 90 });
         gridRegistrations.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Od", DataPropertyName = nameof(VehicleRegistrationHistoryDto.ValidFrom), Width = 90, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" } });
         gridRegistrations.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Do", DataPropertyName = nameof(VehicleRegistrationHistoryDto.ValidTo), Width = 90, DefaultCellStyle = new DataGridViewCellStyle { Format = "dd.MM.yyyy" } });
         gridRegistrations.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText = "Trenutna", DataPropertyName = nameof(VehicleRegistrationHistoryDto.IsCurrent), Width = 70 });
@@ -120,3 +120,4 @@ public partial class VehicleRegistryView : UserControl
         values.Add($"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value.Trim())}");
     }
 }
+

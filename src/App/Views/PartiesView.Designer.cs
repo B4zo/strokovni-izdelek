@@ -1,6 +1,6 @@
 namespace App.Views;
 
-partial class CustomersView
+partial class PartiesView
 {
     private System.ComponentModel.IContainer components = null;
 
@@ -26,7 +26,7 @@ partial class CustomersView
         txtEmailFilter = new TextBox();
         btnSearch = new Button();
         btnClearSearch = new Button();
-        gridCustomers = new DataGridView();
+        gridParty = new DataGridView();
         panelEditor = new Panel();
         lblEditorTitle = new Label();
         panelEditorFields = new Panel();
@@ -40,22 +40,20 @@ partial class CustomersView
         panelPersonFields = new Panel();
         txtFullName = new TextBox();
         dateBirth = new DateTimePicker();
-        txtNationalNo = new TextBox();
+        txtEmso = new TextBox();
         panelCompanyFields = new Panel();
         txtCompanyName = new TextBox();
-        txtRegistrationNo = new TextBox();
-        txtTaxNumber = new TextBox();
+        txtCompanyRegNo = new TextBox();
+        txtTaxNo = new TextBox();
         txtAddress = new TextBox();
         txtPhone = new TextBox();
         txtEmail = new TextBox();
         flowButtons = new FlowLayoutPanel();
         btnRefresh = new Button();
-        btnSave = new Button();
-        btnDelete = new Button();
         tableLayoutPanel1.SuspendLayout();
         panelSearch.SuspendLayout();
         flowSearch.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)gridCustomers).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)gridParty).BeginInit();
         panelEditor.SuspendLayout();
         panelEditorFields.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)gridOwnedVehicles).BeginInit();
@@ -84,7 +82,7 @@ partial class CustomersView
         // panelSearch
         // 
         panelSearch.BorderStyle = BorderStyle.FixedSingle;
-        panelSearch.Controls.Add(gridCustomers);
+        panelSearch.Controls.Add(gridParty);
         panelSearch.Controls.Add(flowSearch);
         panelSearch.Controls.Add(lblSearchTitle);
         panelSearch.Dock = DockStyle.Fill;
@@ -179,24 +177,24 @@ partial class CustomersView
         btnClearSearch.UseVisualStyleBackColor = true;
         btnClearSearch.Click += btnClearSearch_Click;
         // 
-        // gridCustomers
+        // gridParty
         // 
-        gridCustomers.AllowUserToAddRows = false;
-        gridCustomers.AllowUserToDeleteRows = false;
-        gridCustomers.AllowUserToOrderColumns = false;
-        gridCustomers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        gridCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-        gridCustomers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        gridCustomers.Location = new Point(15, 149);
-        gridCustomers.MultiSelect = false;
-        gridCustomers.Name = "gridCustomers";
-        gridCustomers.ReadOnly = true;
-        gridCustomers.RowHeadersVisible = false;
-        gridCustomers.ScrollBars = ScrollBars.Both;
-        gridCustomers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        gridCustomers.Size = new Size(412, 573);
-        gridCustomers.TabIndex = 2;
-        gridCustomers.CellClick += gridCustomers_CellClick;
+        gridParty.AllowUserToAddRows = false;
+        gridParty.AllowUserToDeleteRows = false;
+        gridParty.AllowUserToOrderColumns = false;
+        gridParty.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        gridParty.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+        gridParty.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+        gridParty.Location = new Point(15, 149);
+        gridParty.MultiSelect = false;
+        gridParty.Name = "gridParty";
+        gridParty.ReadOnly = true;
+        gridParty.RowHeadersVisible = false;
+        gridParty.ScrollBars = ScrollBars.Both;
+        gridParty.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        gridParty.Size = new Size(412, 573);
+        gridParty.TabIndex = 2;
+        gridParty.CellClick += gridParty_CellClick;
         // 
         // panelEditor
         // 
@@ -231,7 +229,7 @@ partial class CustomersView
         panelEditorFields.Controls.Add(txtEmail);
         panelEditorFields.Controls.Add(txtPhone);
         panelEditorFields.Controls.Add(txtAddress);
-        panelEditorFields.Controls.Add(txtTaxNumber);
+        panelEditorFields.Controls.Add(txtTaxNo);
         panelEditorFields.Controls.Add(panelCompanyFields);
         panelEditorFields.Controls.Add(panelPersonFields);
         panelEditorFields.Controls.Add(flowType);
@@ -275,7 +273,7 @@ partial class CustomersView
         // 
         panelPersonFields.Controls.Add(txtFullName);
         panelPersonFields.Controls.Add(dateBirth);
-        panelPersonFields.Controls.Add(txtNationalNo);
+        panelPersonFields.Controls.Add(txtEmso);
         panelPersonFields.Location = new Point(12, 50);
         panelPersonFields.Name = "panelPersonFields";
         panelPersonFields.Size = new Size(420, 110);
@@ -299,18 +297,18 @@ partial class CustomersView
         dateBirth.Size = new Size(220, 23);
         dateBirth.TabIndex = 1;
         // 
-        // txtNationalNo
+        // txtEmso
         // 
-        txtNationalNo.Location = new Point(3, 61);
-        txtNationalNo.Name = "txtNationalNo";
-        txtNationalNo.PlaceholderText = "EMSO";
-        txtNationalNo.Size = new Size(220, 23);
-        txtNationalNo.TabIndex = 2;
+        txtEmso.Location = new Point(3, 61);
+        txtEmso.Name = "txtEmso";
+        txtEmso.PlaceholderText = "EMŠO";
+        txtEmso.Size = new Size(220, 23);
+        txtEmso.TabIndex = 2;
         // 
         // panelCompanyFields
         // 
         panelCompanyFields.Controls.Add(txtCompanyName);
-        panelCompanyFields.Controls.Add(txtRegistrationNo);
+        panelCompanyFields.Controls.Add(txtCompanyRegNo);
         panelCompanyFields.Location = new Point(12, 50);
         panelCompanyFields.Name = "panelCompanyFields";
         panelCompanyFields.Size = new Size(420, 80);
@@ -324,21 +322,21 @@ partial class CustomersView
         txtCompanyName.Size = new Size(260, 23);
         txtCompanyName.TabIndex = 0;
         // 
-        // txtRegistrationNo
+        // txtCompanyRegNo
         // 
-        txtRegistrationNo.Location = new Point(3, 32);
-        txtRegistrationNo.Name = "txtRegistrationNo";
-        txtRegistrationNo.PlaceholderText = "Maticna stevilka";
-        txtRegistrationNo.Size = new Size(220, 23);
-        txtRegistrationNo.TabIndex = 1;
+        txtCompanyRegNo.Location = new Point(3, 32);
+        txtCompanyRegNo.Name = "txtCompanyRegNo";
+        txtCompanyRegNo.PlaceholderText = "Maticna stevilka";
+        txtCompanyRegNo.Size = new Size(220, 23);
+        txtCompanyRegNo.TabIndex = 1;
         // 
-        // txtTaxNumber
+        // txtTaxNo
         // 
-        txtTaxNumber.Location = new Point(15, 170);
-        txtTaxNumber.Name = "txtTaxNumber";
-        txtTaxNumber.PlaceholderText = "Davcna stevilka";
-        txtTaxNumber.Size = new Size(220, 23);
-        txtTaxNumber.TabIndex = 3;
+        txtTaxNo.Location = new Point(15, 170);
+        txtTaxNo.Name = "txtTaxNo";
+        txtTaxNo.PlaceholderText = "Davcna stevilka";
+        txtTaxNo.Size = new Size(220, 23);
+        txtTaxNo.TabIndex = 3;
         // 
         // txtAddress
         // 
@@ -367,11 +365,9 @@ partial class CustomersView
         // flowButtons
         // 
         flowButtons.Controls.Add(btnRefresh);
-        flowButtons.Controls.Add(btnSave);
-        flowButtons.Controls.Add(btnDelete);
         flowButtons.Location = new Point(16, 349);
         flowButtons.Name = "flowButtons";
-        flowButtons.Size = new Size(320, 40);
+        flowButtons.Size = new Size(120, 40);
         flowButtons.TabIndex = 2;
         // 
         // lblOwnedVehicles
@@ -430,39 +426,19 @@ partial class CustomersView
         btnRefresh.UseVisualStyleBackColor = true;
         btnRefresh.Click += btnRefresh_Click;
         // 
-        // btnSave
-        // 
-        btnSave.Location = new Point(84, 3);
-        btnSave.Name = "btnSave";
-        btnSave.Size = new Size(75, 30);
-        btnSave.TabIndex = 1;
-        btnSave.Text = "Shrani";
-        btnSave.UseVisualStyleBackColor = true;
-        btnSave.Click += btnSave_Click;
-        // 
-        // btnDelete
-        // 
-        btnDelete.Location = new Point(165, 3);
-        btnDelete.Name = "btnDelete";
-        btnDelete.Size = new Size(75, 30);
-        btnDelete.TabIndex = 2;
-        btnDelete.Text = "Brisi";
-        btnDelete.UseVisualStyleBackColor = true;
-        btnDelete.Click += btnDelete_Click;
-        // 
-        // CustomersView
+        // PartiesView
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         Controls.Add(tableLayoutPanel1);
-        Name = "CustomersView";
+        Name = "PartiesView";
         Size = new Size(1000, 745);
         tableLayoutPanel1.ResumeLayout(false);
         panelSearch.ResumeLayout(false);
         panelSearch.PerformLayout();
         flowSearch.ResumeLayout(false);
         flowSearch.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)gridCustomers).EndInit();
+        ((System.ComponentModel.ISupportInitialize)gridParty).EndInit();
         panelEditor.ResumeLayout(false);
         panelEditor.PerformLayout();
         panelEditorFields.ResumeLayout(false);
@@ -490,7 +466,7 @@ partial class CustomersView
     private TextBox txtEmailFilter;
     private Button btnSearch;
     private Button btnClearSearch;
-    private DataGridView gridCustomers;
+    private DataGridView gridParty;
     private Panel panelEditor;
     private Label lblEditorTitle;
     private Panel panelEditorFields;
@@ -504,16 +480,16 @@ partial class CustomersView
     private Panel panelPersonFields;
     private TextBox txtFullName;
     private DateTimePicker dateBirth;
-    private TextBox txtNationalNo;
+    private TextBox txtEmso;
     private Panel panelCompanyFields;
     private TextBox txtCompanyName;
-    private TextBox txtRegistrationNo;
-    private TextBox txtTaxNumber;
+    private TextBox txtCompanyRegNo;
+    private TextBox txtTaxNo;
     private TextBox txtAddress;
     private TextBox txtPhone;
     private TextBox txtEmail;
     private FlowLayoutPanel flowButtons;
     private Button btnRefresh;
-    private Button btnSave;
-    private Button btnDelete;
 }
+
+
